@@ -186,7 +186,7 @@ twitch-videoad.js text/javascript
         return req.responseText.split("'")[1];
     }
     function hookWorkerFetch() {
-        console.log('Twitch adblocker is enabled');
+        console.warn('Twitch adblocker is enabled');
         var realFetch = fetch;
         fetch = async function(url, options) {
             if (typeof url === 'string') {
@@ -214,7 +214,7 @@ twitch-videoad.js text/javascript
                 } else if (url.includes('/api/channel/hls/')) {
                     var channelName = (new URL(url)).pathname.match(/([^\/]+)(?=\.\w+$)/)[0];
                     UsherParams = (new URL(url)).search;
-                    console.log('UsherParams: ' + UsherParams);
+                    console.warn('UsherParams: ' + UsherParams);
                     CurrentChannelName = channelName;
                     //To prevent pause/resume loop for mid-rolls.
                     var isPBYPRequest = url.includes('picture-by-picture');
@@ -336,7 +336,7 @@ twitch-videoad.js text/javascript
         }
         if (streamInfo.EncodingsM3U8Cache[playerType].Resolution != resolutionInfo.Resolution ||
             streamInfo.EncodingsM3U8Cache[playerType].RequestTime < Date.now() - EncodingCacheTimeout) {
-            console.log(`Blocking ads (type:${playerType}, resolution:${resolutionInfo.Resolution}, frameRate:${resolutionInfo.FrameRate}, qualityOverride:${qualityOverride})`);
+                console.warn(`Blocking ads (type:${playerType}, resolution:${resolutionInfo.Resolution}, frameRate:${resolutionInfo.FrameRate}, qualityOverride:${qualityOverride})`);
         }
         streamInfo.EncodingsM3U8Cache[playerType].RequestTime = Date.now();
         streamInfo.EncodingsM3U8Cache[playerType].Value = encodingsM3u8;
@@ -433,13 +433,13 @@ twitch-videoad.js text/javascript
                     switch (proxyType) {
                         case 'TTV LOL':
                             encodingsM3u8Response = await realFetch('https://api.ttv.lol/playlist/' + CurrentChannelName + '.m3u8%3Fallow_source%3Dtrue'/* + encodeURIComponent(match[2])*/, {headers: {'X-Donate-To': 'https://ttv.lol/donate'}});
-                            console.log('TTV LOL response: ' + encodingsM3u8Response);
+                            console.warn('TTV LOL response: ' + encodingsM3u8Response);
                             break;
                         /*case 'Purple Adblock':// Broken...
                             encodingsM3u8Response = await realFetch('https://eu1.jupter.ga/channel/' + CurrentChannelName);*/
                         case 'Falan':// https://greasyfork.org/en/scripts/425139-twitch-ad-fix/code
                             encodingsM3u8Response = await realFetch(atob('aHR0cHM6Ly9qaWdnbGUuYmV5cGF6YXJpZ3VydXN1LndvcmtlcnMuZGV2') + '/hls/' + CurrentChannelName + '.m3u8%3Fallow_source%3Dtrue'/* + encodeURIComponent(match[2])*/);
-                            console.log('Falan response: ' + encodingsM3u8Response);
+                            console.warn('Falan response: ' + encodingsM3u8Response);
                             break;
                     }
                     if (encodingsM3u8Response && encodingsM3u8Response.status === 200) {
@@ -468,7 +468,7 @@ twitch-videoad.js text/javascript
             }
         } else {
             if (WasShowingAd) {
-                console.log('Finished blocking ads');
+                console.warn('Finished blocking ads');
                 WasShowingAd = false;
                 //Here we put player back to original quality and remove the blocking message.
                 postMessage({
